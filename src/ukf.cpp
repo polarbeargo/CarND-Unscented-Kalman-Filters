@@ -116,8 +116,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
       float py = rho * sin(phi);
 
       x_ << px, py, 0, 0, 0;
-      std::cout << "start processmeasure RADAR x: " << std::endl
-                << x_ << std::endl;
     }
     else
     {
@@ -125,8 +123,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
       float py = meas_package.raw_measurements_[1];
 
       x_ << px, py, 0, 0, 0;
-      std::cout << "start processmeasure Laser x: " << std::endl
-                << x_ << std::endl;
     }
 
     // Saving First timestamp
@@ -138,22 +134,17 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
   // Prediction
   double delta_t = (meas_package.timestamp_ - time_us_) / 1000000.0;
   time_us_ = meas_package.timestamp_;
-  std::cout << "start predict: " << std::endl;
+
   Prediction(delta_t);
-  std::cout << " predict suc: " << std::endl;
 
   // switch between lidar and radar measurements
   if (meas_package.sensor_type_ == MeasurementPackage::RADAR)
   {
-    std::cout << "start UpdateRadar: " << std::endl;
     UpdateRadar(meas_package);
-    std::cout << "suc UpdateRadar: " << std::endl;
   }
   else if (meas_package.sensor_type_ == MeasurementPackage::LASER)
   {
-    std::cout << "start UpdateLidar: " << std::endl;
     UpdateLidar(meas_package);
-    std::cout << "suc UpdateLidar: " << std::endl;
   }
 }
 
