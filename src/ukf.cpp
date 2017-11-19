@@ -23,6 +23,11 @@ UKF::UKF()
 
   // initial covariance matrix
   P_ = MatrixXd(5, 5);
+  P_ << 1, 0, 0, 0, 0,
+      0, 1, 0, 0, 0,
+      0, 0, 1, 0, 0,
+      0, 0, 0, 1, 0,
+      0, 0, 0, 0, 1;
 
   // Process noise standard deviation longitudinal acceleration in m/s^2
   std_a_ = 1.5;
@@ -89,13 +94,6 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package)
   Complete this function! Make sure you switch between lidar and radar
   measurements.
   */
-
-  // initial covariance matrix
-  P_ << 1, 0, 0, 0, 0,
-      0, 1, 0, 0, 0,
-      0, 0, 1, 0, 0,
-      0, 0, 0, 1, 0,
-      0, 0, 0, 0, 1;
 
   if (!is_initialized_)
   {
