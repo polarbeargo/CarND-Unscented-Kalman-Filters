@@ -21,8 +21,11 @@ UKF::UKF()
   // initial state vector
   x_ = VectorXd(5);
 
+  // Set state dimension
+  n_x_ = 5;
+
   // initial covariance matrix
-  P_ = MatrixXd(5, 5);
+  P_ = MatrixXd::Identity(n_x_, n_x_);
   P_ << 1, 0, 0, 0, 0,
       0, 1, 0, 0, 0,
       0, 0, 1, 0, 0,
@@ -63,9 +66,6 @@ UKF::UKF()
 
   // Time when the state is true, in us
   time_us_ = 0.0;
-
-  // Set state dimension
-  n_x_ = 5;
 
   // Define spreading parameter
   lambda_ = 3 - n_x_;
