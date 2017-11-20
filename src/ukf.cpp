@@ -259,21 +259,11 @@ void UKF::Prediction(double delta_t)
     Xsig_pred_(4, i) = yawd_p;
   }
 
-  // set weights
-  double weight_0 = lambda_ / (lambda_ + n_aug_);
-  weights_(0) = weight_0;
-  for (int i = 1; i < n_sig_; i++)
-  { // 2n+1 weights
-    double weight = 0.5 / (n_aug_ + lambda_);
-    weights_(i) = weight;
-  }
+  weights_.fill(0.5 / (lambda_ + n_aug_));
+  weights_(0) = lambda_ / (lambda_ + n_aug_);
 
   // predicted state mean
-  x_.fill(0.0);
-  for (int i = 0; i < n_sig_; i++)
-  { // iterate over sigma points
-    x_ = x_ + weights_(i) * Xsig_pred_.col(i);
-  }
+  x_ = Xsig_pred_ * weights_;
 
   // predicted state covariance matrix
   P_.fill(0.0);
