@@ -73,6 +73,9 @@ UKF::UKF()
   // set augmented dimension
   n_aug_ = 7;
 
+  // set measurement dimension
+  int n_z = 2;
+
   // expressed in a variable improve performance
   n_sig_ = 2 * n_aug_ + 1;
 
@@ -81,6 +84,16 @@ UKF::UKF()
 
   //create vector for weights
   weights_ = VectorXd(n_sig_);
+
+  // Initialize measurement noice covarieance matrix
+  R_radar_ = MatrixXd(n_z + 1, n_z + 1);
+  R_radar_ << std_radr_ * std_radr_, 0, 0,
+      0, std_radphi_ * std_radphi_, 0,
+      0, 0, std_radrd_ * std_radrd_;
+
+  R_lidar_ = MatrixXd(n_z, n_z);
+  R_lidar_ << std_laspx_ * std_laspx_, 0,
+      0, std_laspy_ * std_laspy_;
 }
 
 UKF::~UKF() {}
@@ -323,10 +336,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package)
   }
 
   // add measurement noise covariance matrix
-  MatrixXd R = MatrixXd(n_z, n_z);
-  R << std_laspx_ * std_laspx_, 0,
-      0, std_laspy_ * std_laspy_;
-  S = S + R;
+  S = S + R_lidar_;
 
   // create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
@@ -424,11 +434,7 @@ void UKF::UpdateRadar(MeasurementPackage meas_package)
   }
 
   // add measurement noise covariance matrix
-  MatrixXd R = MatrixXd(n_z, n_z);
-  R << std_radr_ * std_radr_, 0, 0,
-      0, std_radphi_ * std_radphi_, 0,
-      0, 0, std_radrd_ * std_radrd_;
-  S = S + R;
+  S = S + R_radar_;
 
   // create matrix for cross correlation Tc
   MatrixXd Tc = MatrixXd(n_x_, n_z);
