@@ -18,11 +18,11 @@ UKF::UKF()
   // if this is false, radar measurements will be ignored (except during init)
   use_radar_ = true;
 
-  // initial state vector
-  x_ = VectorXd(5);
-
   // Set state dimension
   n_x_ = 5;
+
+  // initial state vector
+  x_ = VectorXd(n_x_);
 
   // initial covariance matrix
   P_ = MatrixXd::Identity(n_x_, n_x_);
@@ -191,15 +191,15 @@ void UKF::Prediction(double delta_t)
   lambda_ = 3 - n_aug_;
 
   // Create augmented mean state
-  x_aug.head(5) = x_;
-  x_aug(5) = 0;
-  x_aug(6) = 0;
+  x_aug.head(n_x_) = x_;
+  x_aug(n_x_) = 0;
+  x_aug(n_x_ + 1) = 0;
 
   // Create augmented covariance matrix
   P_aug.fill(0.0);
-  P_aug.topLeftCorner(5, 5) = P_;
-  P_aug(5, 5) = std_a_ * std_a_;
-  P_aug(6, 6) = std_yawdd_ * std_yawdd_;
+  P_aug.topLeftCorner(n_x_, n_x_) = P_;
+  P_aug(n_x_, n_x_) = std_a_ * std_a_;
+  P_aug(n_x_ + 1, n_x_ + 1) = std_yawdd_ * std_yawdd_;
 
   // Create square root matrix
   MatrixXd L = P_aug.llt().matrixL();
@@ -221,8 +221,8 @@ void UKF::Prediction(double delta_t)
     double v = Xsig_aug(2, i);
     double yaw = Xsig_aug(3, i);
     double yawd = Xsig_aug(4, i);
-    double nu_a = Xsig_aug(5, i);
-    double nu_yawdd = Xsig_aug(6, i);
+    double nu_a = Xsig_aug(n_x_, i);
+    double nu_yawdd = Xsig_aug(n_x_ + 1, i);
 
     // predicted state values
     double px_p, py_p;
