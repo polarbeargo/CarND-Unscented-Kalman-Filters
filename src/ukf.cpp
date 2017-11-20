@@ -302,20 +302,7 @@ void UKF::UpdateLidar(MeasurementPackage meas_package)
   int n_z = 2;
 
   // create matrix for sigma points in measurement space
-  MatrixXd Zsig = MatrixXd(n_z, n_sig_);
-
-  // transform sigma points into measurement space
-  for (int i = 0; i < n_sig_; i++)
-  { // 2n+1 simga points
-
-    // extract values for better readibility
-    double p_x = Xsig_pred_(0, i);
-    double p_y = Xsig_pred_(1, i);
-
-    // measurement model
-    Zsig(0, i) = p_x;
-    Zsig(1, i) = p_y;
-  }
+  MatrixXd Zsig = Xsig_pred_.block(0, 0, n_z, n_sig_);
 
   // mean predicted measurement
   VectorXd z_pred = VectorXd(n_z);
